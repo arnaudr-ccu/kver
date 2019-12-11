@@ -4,13 +4,14 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"regexp"
 )
 
-func find_version_string(path string) (string, error) {
+func find_release_string(path string) (string, error) {
 	buf, err := ioutil.ReadFile(path)
 	if err != nil {
 		return "", err
@@ -27,21 +28,27 @@ func find_version_string(path string) (string, error) {
 }
 
 func main() {
-	if len(os.Args) != 2 {
-		fmt.Fprintln(os.Stderr, "Usage:", os.Args[0], "KERNEL_PATH")
-		os.Exit(1)
-	}
+	var kernel string
+	var release string
 
-	path := os.Args[1]
-	ver, err := find_version_string(path)
-	if err != nil {
-		fmt.Fprintln(os.Stderr, "Error:", err)
-		os.Exit(1)
-	}
-	if ver == "" {
-		fmt.Fprintln(os.Stderr, "No version found")
-		os.Exit(1)
-	}
+	flag.StringVar(&kernel, "kernel", "", "print the release for this kernel")
+	flag.StringVar(&release, "release", "", "find the kernel that matches this release")
+	flag.Parse()
 
-	fmt.Println(ver)
+	if kernel != "" {
+		ret, err := find_release_string(kernel)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "Error:", err)
+			os.Exit(1)
+		}
+		if ret == "" {
+			fmt.Fprintln(os.Stderr, "No release found")
+			os.Exit(1)
+		}
+		fmt.Println(ret)
+	} else {
+		fmt.Fprintf(os.Stderr, "Usage of %s:\n", os.Args[0])
+		flag.PrintDefaults()
+	}
 }
+

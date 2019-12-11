@@ -3,7 +3,7 @@ version, something like `\d\d*\.\d\d*\.\d\d*\S*`. The first match is returned.
 
 Use-case:
 
-    $ ./kver /boot/vmlinuz-linux
+    $ ./kver -kernel /boot/vmlinuz-linux
     5.3.0-2-amd64
     $ ls /usr/lib/modules
     5.3.0-2-amd64
